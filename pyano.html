@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Piano</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #2c3e50, #4a69bd);
+            color: white;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piano-container {
+            position: relative;
+            width: 100%;
+            max-width: 840px;
+            height: 300px;
+            background-color: #1e272e;
+            border-radius: 10px;
+            padding: 30px 20px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+        
+        .piano {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .white-key {
+            flex: 1;
+            background: linear-gradient(to bottom, #f5f5f5, #ddd);
+            border: 1px solid #ccc;
+            border-radius: 0 0 5px 5px;
+            position: relative;
+            margin: 0 2px;
+            cursor: pointer;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 10px;
+            color: #555;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            transition: background 0.1s ease;
+        }
+        
+        .white-key:hover {
+            background: linear-gradient(to bottom, #fff, #eee);
+        }
+        
+        .white-key:active, .white-key.active {
+            background: linear-gradient(to top, #f0f0f0, #d0d0d0);
+            transform: translateY(3px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .black-keys {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 12px;
+            z-index: 2;
+        }
+        
+        .black-key {
+            width: 9%;
+            height: 100%;
+            background: linear-gradient(to bottom, #333, #000);
+            border-radius: 0 0 3px 3px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 10px;
+            color: #ddd;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-left: -4.5%;
+            margin-right: -4.5%;
+            transition: background 0.1s ease;
+            position: relative;
+        }
+        
+        .black-key:hover {
+            background: linear-gradient(to bottom, #444, #111);
+        }
+        
+        .black-key:active, .black-key.active {
+            background: linear-gradient(to top, #333, #000);
+            transform: translateY(3px);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .spacer {
+            width: 2.25%;
+            height: 100%;
+            visibility: hidden;
+        }
+        
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            padding: 8px 15px;
+            background-color: #2980b9;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .control-btn:hover {
+            background-color: #3498db;
+        }
+        
+        .key-label {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.5;
+            padding: 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Piano</h1>
+    
+    <div class="piano-container">
+        <div class="piano">
+            <!-- White keys -->
+            <div class="white-key" data-note="C" data-octave="4">
+                C
+                <div class="key-label">A</div>
+            </div>
+            <div class="white-key" data-note="D" data-octave="4">
+                D
+                <div class="key-label">S</div>
+            </div>
+            <div class="white-key" data-note="E" data-octave="4">
+                E
+                <div class="key-label">D</div>
+            </div>
+            <div class="white-key" data-note="F" data-octave="4">
+                F
+                <div class="key-label">F</div>
+            </div>
+            <div class="white-key" data-note="G" data-octave="4">
+                G
+                <div class="key-label">G</div>
+            </div>
+            <div class="white-key" data-note="A" data-octave="4">
+                A
+                <div class="key-label">H</div>
+            </div>
+            <div class="white-key" data-note="B" data-octave="4">
+                B
+                <div class="key-label">J</div>
+            </div>
+            <div class="white-key" data-note="C" data-octave="5">
+                C
+                <div class="key-label">K</div>
+            </div>
+            
+            <!-- Black keys -->
+            <div class="black-keys">
+                <div class="black-key" data-note="C#" data-octave="4">
+                    C#
+                    <div class="key-label">W</div>
+                </div>
+                <div class="black-key" data-note="D#" data-octave="4">
+                    D#
+                    <div class="key-label">E</div>
+                </div>
+                <div class="spacer"></div>
+                <div class="black-key" data-note="F#" data-octave="4">
+                    F#
+                    <div class="key-label">T</div>
+                </div>
+                <div class="black-key" data-note="G#" data-octave="4">
+                    G#
+                    <div class="key-label">Y</div>
+                </div>
+                <div class="black-key" data-note="A#" data-octave="4">
+                    A#
+                    <div class="key-label">U</div>
+                </div>
+                <div class="spacer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="control-btn" id="toggle-labels">Hide Labels</button>
+        <button class="control-btn" id="play-demo">Play Demo</button>
+    </div>
+    
+    <div class="instructions">
+        <p>Use your mouse to click on the keys or play with your keyboard using the labeled keys (A, S, D, F, G, H, J, K for white keys and W, E, T, Y, U for black keys).</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Audio context
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioContext = new AudioContext();
+            
+            // Get all piano keys
+            const whiteKeys = document.querySelectorAll('.white-key');
+            const blackKeys = document.querySelectorAll('.black-key');
+            const allKeys = [...whiteKeys, ...blackKeys];
+            
+            // Note frequencies (in Hz)
+            const noteFrequencies = {
+                'C4': 261.63,
+                'C#4': 277.18,
+                'D4': 293.66,
+                'D#4': 311.13,
+                'E4': 329.63,
+                'F4': 349.23,
+                'F#4': 369.99,
+                'G4': 392.00,
+                'G#4': 415.30,
+                'A4': 440.00,
+                'A#4': 466.16,
+                'B4': 493.88,
+                'C5': 523.25
+            };
+            
+            // Keyboard mapping
+            const keyMap = {
+                'a': 'C4',
+                'w': 'C#4',
+                's': 'D4',
+                'e': 'D#4',
+                'd': 'E4',
+                'f': 'F4',
+                't': 'F#4',
+                'g': 'G4',
+                'y': 'G#4',
+                'h': 'A4',
+                'u': 'A#4',
+                'j': 'B4',
+                'k': 'C5'
+            };
+            
+            // Active notes (to prevent duplicate sounds)
+            const activeNotes = {};
+            
+            // Function to play a note
+            function playNote(note, octave) {
+                const fullNote = note + octave;
+                const frequency = noteFrequencies[fullNote];
+                
+                if (frequency) {
+                    // Stop the previous instance of this note if it exists
+                    if (activeNotes[fullNote]) {
+                        activeNotes[fullNote].oscillator.stop();
+                        activeNotes[fullNote].gain.disconnect();
+                    }
+                    
+                    // Create oscillator
+                    const oscillator = audioContext.createOscillator();
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                    
+                    // Create gain node for envelope
+                    const gainNode = audioContext.createGain();
+                    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.7, audioContext.currentTime + 0.05);
+                    
+                    // Connect nodes
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Start oscillator
+                    oscillator.start();
+                    
+                    // Store the active note
+                    activeNotes[fullNote] = {
+                        oscillator: oscillator,
+                        gain: gainNode
+                    };
+                    
+                    return { oscillator, gainNode, fullNote };
+                }
+                return null;
+            }
+            
+            // Function to stop a note
+            function stopNote(fullNote) {
+                if (activeNotes[fullNote]) {
+                    const { oscillator, gain } = activeNotes[fullNote];
+                    
+                    // Create a fade out
+                    gain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
+                    
+                    // Schedule stop after fade out
+                    setTimeout(() => {
+                        oscillator.stop();
+                        gain.disconnect();
+                        delete activeNotes[fullNote];
+                    }, 100);
+                }
+            }
+            
+            // Handle mouse events for piano keys
+            allKeys.forEach(key => {
+                const note = key.dataset.note;
+                const octave = key.dataset.octave;
+                const fullNote = note + octave;
+                
+                key.addEventListener('mousedown', () => {
+                    playNote(note, octave);
+                    key.classList.add('active');
+                });
+                
+                key.addEventListener('mouseup', () => {
+                    stopNote(fullNote);
+                    key.classList.remove('active');
+                });
+                
+                key.addEventListener('mouseleave', () => {
+                    if (key.classList.contains('active')) {
+                        stopNote(fullNote);
+                        key.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Handle keyboard events
+            const pressedKeys = {};
+            
+            document.addEventListener('keydown', (e) => {
+                const key = e.key.toLowerCase();
+                
+                // Prevent repeating keys when held down
+                if (pressedKeys[key]) return;
+                
+                if (keyMap[key]) {
+                    const fullNote = keyMap[key];
+                    const [note, octave] = [fullNote.slice(0, -1), fullNote.slice(-1)];
+                    
+                    playNote(note, octave);
+                    pressedKeys[key] = true;
+                    
+                    // Add active class to the corresponding piano key
+                    allKeys.forEach(pianoKey => {
+                        const keyNote = pianoKey.dataset.note + pianoKey.dataset.octave;
+                        if (keyNote === fullNote) {
+                            pianoKey.classList.add('active');
+                        }
+                    });
+                }
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                const key = e.key.toLowerCase();
+                
+                if (keyMap[key]) {
+                    const fullNote = keyMap[key];
+                    stopNote(fullNote);
+                    delete pressedKeys[key];
+                    
+                    // Remove active class from the corresponding piano key
+                    allKeys.forEach(pianoKey => {
+                        const keyNote = pianoKey.dataset.note + pianoKey.dataset.octave;
+                        if (keyNote === fullNote) {
+                            pianoKey.classList.remove('active');
+                        }
+                    });
+                }
+            });
+            
+            // Toggle labels button
+            const toggleLabelsBtn = document.getElementById('toggle-labels');
+            const keyLabels = document.querySelectorAll('.key-label');
+            
+            toggleLabelsBtn.addEventListener('click', () => {
+                keyLabels.forEach(label => {
+                    label.style.display = label.style.display === 'none' ? '' : 'none';
+                });
+                toggleLabelsBtn.textContent = toggleLabelsBtn.textContent === 'Hide Labels' ? 'Show Labels' : 'Hide Labels';
+            });
+            
+            // Play demo button
+            const playDemoBtn = document.getElementById('play-demo');
+            let isPlaying = false;
+            
+            // Simple demo melody (Twinkle Twinkle Little Star)
+            const demoMelody = [
+                { note: 'C', octave: '4', duration: 500 },
+                { note: 'C', octave: '4', duration: 500 },
+                { note: 'G', octave: '4', duration: 500 },
+                { note: 'G', octave: '4', duration: 500 },
+                { note: 'A', octave: '4', duration: 500 },
+                { note: 'A', octave: '4', duration: 500 },
+                { note: 'G', octave: '4', duration: 1000 },
+                { note: 'F', octave: '4', duration: 500 },
+                { note: 'F', octave: '4', duration: 500 },
+                { note: 'E', octave: '4', duration: 500 },
+                { note: 'E', octave: '4', duration: 500 },
+                { note: 'D', octave: '4', duration: 500 },
+                { note: 'D', octave: '4', duration: 500 },
+                { note: 'C', octave: '4', duration: 1000 }
+            ];
+            
+            playDemoBtn.addEventListener('click', () => {
+                if (isPlaying) return;
+                
+                isPlaying = true;
+                playDemoBtn.textContent = 'Playing...';
+                
+                // Resume the audio context if it's suspended
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Play the demo melody
+                let time = 0;
+                
+                demoMelody.forEach((noteInfo, index) => {
+                    setTimeout(() => {
+                        // Find and highlight the corresponding key
+                        allKeys.forEach(key => {
+                            if (key.dataset.note === noteInfo.note && key.dataset.octave === noteInfo.octave) {
+                                key.classList.add('active');
+                                const noteData = playNote(noteInfo.note, noteInfo.octave);
+                                
+                                // Remove highlight and stop note after duration
+                                setTimeout(() => {
+                                    key.classList.remove('active');
+                                    if (noteData) {
+                                        stopNote(noteData.fullNote);
+                                    }
+                                    
+                                    // Check if this is the last note
+                                    if (index === demoMelody.length - 1) {
+                                        isPlaying = false;
+                                        playDemoBtn.textContent = 'Play Demo';
+                                    }
+                                }, noteInfo.duration - 50);
+                            }
+                        });
+                    }, time);
+                    
+                    time += noteInfo.duration;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+Last edited just now

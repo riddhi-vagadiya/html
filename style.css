@@ -1,0 +1,11 @@
+.r-para{
+		color:red;
+		font-size:30px;
+		line-height:1;
+		letter-spacing:1px;
+}
+#r-btn{
+		border:none;
+		padding:10px;
+		color:blue;
+}
